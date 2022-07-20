@@ -1,9 +1,12 @@
+/*Récupérer l'ID dans l'URL*/
 let url = new URL(window.location.href);
 let searchParams = new URLSearchParams(url.search);
 let productId = searchParams.get("id");
 
+/*Récupérer les informations dans l'API*/
 const apiFetch = fetch(`http://localhost:3000/api/products/${productId}`);
 
+/*Intégrer le html dans la section item*/
 apiFetch.then(async function(res) {
   try {
     if (res.ok) {
@@ -34,12 +37,59 @@ apiFetch.then(async function(res) {
           option.value = product.colors[i];
           option.textContent = product.colors[i];
          
-        }
-        
+        } 
       }
+      /* Afficher les informations du produit */
       displayProduct();
     }
   } catch (e) {
     console.log(e);
   }
 })
+
+/* Stocker les produits ajoutés dans le Panier */
+
+function saveCart() {
+  let cart = []
+  const click = document.querySelector("#addToCart");
+  click.addEventListener("click", saveValues);
+
+  function saveValues() {
+    const option = document.querySelector("#colors").value;
+    const quantity = document.querySelector("#quantity").value;
+    const productInfo = {
+      id: productId,
+      color : option,
+      quantity: parseInt(quantity, 10)
+    }
+  
+    if (option === "" || parseInt(quantity, 10) < 1) {
+      alert("Veuillez renseigner la couleur et la quantité souhaitées");
+    } else if (parseInt(quantity, 10) > 100){
+      alert("Vous ne pouvez pas commander plus de 100 produits");
+    } else if (quantity != parseInt(quantity, 10)) {
+      alert("Quantité renseignée incorrecte");
+    } else {
+      let productInCart = cart.find (element => element.id == productInfo.id && element.color == productInfo.color);
+      console.log(productInCart);
+      if (cart.length === 0) {
+        cart.push(productInfo);
+      } else if(productInCart != undefined) {
+        productInCart.quantity = productInCart.quantity + productInfo.quantity;
+      } else {
+        cart.push(productInfo);
+      }      
+      alert("Ajouté au panier");
+    }
+    
+    let cartStorage = JSON.stringify(cart);
+    localStorage.setItem("cart", cartStorage);
+
+    let display = localStorage.getItem("cart");
+    let cartdisplay = JSON.parse(display);
+    console.log(cartdisplay);
+    
+  }
+}
+
+saveCart();
