@@ -46,6 +46,9 @@ const apiFetch = fetch("http://localhost:3000/api/products");
     }
   })
 
+  let getCart = JSON.parse(localStorage.getItem("cart"));
+  console.log(getCart);
+
   
 
 

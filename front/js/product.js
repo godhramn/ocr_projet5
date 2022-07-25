@@ -49,8 +49,12 @@ apiFetch.then(async function(res) {
 
 /* Stocker les produits ajoutés dans le Panier */
 
-function saveCart() {
-  let cart = []
+let getCart = JSON.parse(localStorage.getItem("cart"));
+console.log(getCart);
+
+function saveInCart() {
+
+  cart = [];
   const click = document.querySelector("#addToCart");
   click.addEventListener("click", saveValues);
 
@@ -71,25 +75,16 @@ function saveCart() {
       alert("Quantité renseignée incorrecte");
     } else {
       let productInCart = cart.find (element => element.id == productInfo.id && element.color == productInfo.color);
-      console.log(productInCart);
-      if (cart.length === 0) {
-        cart.push(productInfo);
-      } else if(productInCart != undefined) {
+      if(productInCart != undefined) {
         productInCart.quantity = productInCart.quantity + productInfo.quantity;
       } else {
         cart.push(productInfo);
-      }      
+      }
+      
+      localStorage.setItem("cart", JSON.stringify(cart));
       alert("Ajouté au panier");
     }
-    
-    let cartStorage = JSON.stringify(cart);
-    localStorage.setItem("cart", cartStorage);
-
-    let display = localStorage.getItem("cart");
-    let cartdisplay = JSON.parse(display);
-    console.log(cartdisplay);
-    
   }
 }
 
-saveCart();
+saveInCart();
