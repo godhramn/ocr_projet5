@@ -54,7 +54,7 @@ console.log(getCart);
 
 function saveInCart() {
 
-  cart = [];
+  let cart = JSON.parse(localStorage.getItem("cart"));
   const click = document.querySelector("#addToCart");
   click.addEventListener("click", saveValues);
 
@@ -80,10 +80,10 @@ function saveInCart() {
       } else {
         cart.push(productInfo);
       }
-      
-      localStorage.setItem("cart", JSON.stringify(cart));
       alert("Ajouté au panier");
     }
+    localStorage.setItem("cart", JSON.stringify(cart));
+    console.log(cart);
   }
 }
 
