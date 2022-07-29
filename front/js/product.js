@@ -66,6 +66,10 @@ function saveInCart() {
       color : option,
       quantity: parseInt(quantity, 10)
     }
+
+    if (cart == null) {
+      cart = [];
+    }
   
     if (option === "" || parseInt(quantity, 10) < 1) {
       alert("Veuillez renseigner la couleur et la quantité souhaitées");

@@ -1,6 +1,7 @@
 let cart = JSON.parse(localStorage.getItem("cart"));
 console.log(cart);
 
+let arrayQuantity = [];
 let prices = [];
 
 for (let i = 0; i < cart.length; i++) {
@@ -12,8 +13,10 @@ for (let i = 0; i < cart.length; i++) {
       if (res.ok) {
       let products = await res.json();
 
-      /*Intégrer le html de la section items*/
+      /*Afficher les produits*/
       function displayProducts() {
+
+          /*créer mes éléments html de la section cart__items*/
 
           const items = document.querySelector("#cart__items");
 
@@ -62,8 +65,6 @@ for (let i = 0; i < cart.length; i++) {
           itemQuantity.textContent = "Qté : ";
           settingsQuantity.appendChild(itemQuantity);
 
-          /* input permettant de changer la quantité */
-
           const setQuantity = document.createElement("input");
           setQuantity.type = "number";
           setQuantity.className = "itemQuantity";
@@ -74,9 +75,6 @@ for (let i = 0; i < cart.length; i++) {
           setQuantity.textContent = cart[i].quantity;
           settingsQuantity.appendChild(setQuantity);
 
-
-          /* bouton Supprimer */
-
           const settingsDelete = document.createElement("div");
           settingsDelete.className = `${contentSettings.className}` + "__delete";
           contentSettings.appendChild(settingsDelete);
@@ -86,27 +84,90 @@ for (let i = 0; i < cart.length; i++) {
           itemDelete.textContent = "Supprimer";
           settingsDelete.appendChild(itemDelete);
 
-          
-          /* total quantité */
-          const totalQuantity = document.querySelector("#totalQuantity");
-          const sum = cart.reduce((previousValue, currentValue) => {return previousValue + currentValue}, 0);
-          console.log(sum);
-          totalQuantity.textContent = `${sum}`;
+          /* Modification de la quantité du produit */
 
+          function changeQuantity(){
+            setQuantity.addEventListener("change", updateQuantity);
 
-          /* total prix */
-          
-          prices.push(products.price)
+            function updateQuantity() {
+              if (parseInt(setQuantity.value, 10) > 100) {
+                alert("Vous ne pouvez pas commander plus de 100 produits de même type")
+              } else if (parseInt(setQuantity.value, 10) < 1) {
+                alert("Quantité minimum de 1 produit, ou bien veuillez supprimer le produit du panier")
+              } else {
+                let cart = JSON.parse(localStorage.getItem("cart"));
+                cart[i].quantity = setQuantity.value;
+                localStorage.setItem("cart", JSON.stringify(cart));
+                window.location.reload();
+              }
+            }
+          }
+          changeQuantity();
 
+          /* Suppression du produit */
+
+          function deleteProduct(){
+            itemDelete.addEventListener("click", updateProducts);
+
+            function updateProducts(){
+              let cart = JSON.parse(localStorage.getItem("cart"));
+              cart.splice(i, 1);
+              localStorage.setItem("cart", JSON.stringify(cart));
+              window.location.reload();
+            }
+          }
+
+          deleteProduct()
+
+          /*créer mes éléments html de la section cart__quantity*/
+          /* == afficher le total d'articles */
+
+          function displayQuantity() {
+            arrayQuantity.push(cart[i].quantity);
+            const sum = arrayQuantity.reduce((previousValue, currentValue)  => previousValue + currentValue, 0);
+
+            const totalQuantity = document.querySelector("#totalQuantity");
+            totalQuantity.textContent = parseInt(sum);
+          }
+
+          displayQuantity()
+
+          /*créer mes éléments html de la section cart__price*/
+          /* == afficher le prix total */
+
+          function displayPrice() {
+            prices.push(cart[i].quantity * products.price)
+            const price = prices.reduce((previousValue, currentValue) => previousValue + currentValue, 0);
+
+            const totalPrice = document.querySelector("#totalPrice");
+            totalPrice.textContent = price;
+          }
+          displayPrice()
         }
       }
-      /*Afficher les produits*/
+      
       displayProducts();
+
     } catch (e) {
       console.log(e);
     }
   })
 }
+
+/* PASSER LA COMMANDE */
+
+/* vérifier le formulaire */
+
+const clientInfo = {
+  firstName : document.querySelector("#firstName"),
+  lastName : document.querySelector("#lastName"),
+  address : document.querySelector("#address"),
+  city : document.querySelector("#city"),
+  email : document.querySelector("#email"),
+}
+let emailMsg = document.querySelector("#emailErrorMsg");
+
+
 
 
 
