@@ -171,7 +171,7 @@ const city = document.querySelector("#city");
 const email = document.querySelector("#email");
 
 let textRegExp = new RegExp("[A-Za-zÀ-ÿ\-']");
-let addressRegExp = new RegExp("^[.0-9a-zA-Z\s,-]+$");
+let addressRegExp = new RegExp("^[0-9a-zA-Z\s,-. ]+$");
 let emailRegExp = new RegExp("[A-Za-z0-9]+@[A-Za-z.]+.[A-Za-z]{2,3}$");
 
 /* Tester la saisie du formulaire */
@@ -236,7 +236,7 @@ function validateForm () {
 function placeOrder() {
   const orderClick = document.querySelector("#order");
 
-  orderClick.addEventListener("click", sendOrder, false)
+  orderClick.addEventListener("click", sendOrder, false);
 
   function sendOrder(submit) {
     
@@ -247,39 +247,37 @@ function placeOrder() {
     if (cart.length == 0){
       alert("Vous n'avez aucun article dans le panier")
     } else {
-      const contact = {
-        firstName: firstName.value,
-        lastName: lastName.value,
-        address: address.value,
-        city: city.value,
-        email: email.value
-      }
-
-      console.log(contact)
-      console.log(productsId)
 
       checkInput()
       validateForm ()
 
       if (validateForm() == true) {
 
+        const contact = {
+          firstName: firstName.value,
+          lastName: lastName.value,
+          address: address.value,
+          city: city.value,
+          email: email.value
+        }
+
+        const data = {
+          products : productsId,
+          contact : contact
+        }
+        
         const orderPost = fetch("http://localhost:3000/api/products/order", {
           method : "POST",
           headers : {
+            'Accept': 'application/json',
             "Content-Type" : "application/json"
           },
-          body : JSON.stringify({contact, productsId})
-          })
+          body : JSON.stringify(data)
+        })
 
-        orderPost.then(async function (response) {
-          try {
-            const content = await response.json();
-            /*localStorage.clear("cart");*/
-            /*window.location = `../html/confirmation.html?id=${content.orderId}`;*/
-            console.log(content.orderId)
-          } catch (error) {
-            console.log(error);
-          }
+        orderPost.then(async function (res) {
+          const order = await res.json();
+          window.location.href = `../html/confirmation.html?id=${order.orderId}`;
         });
       } else {
         alert("Veuillez vérifier le formulaire")
