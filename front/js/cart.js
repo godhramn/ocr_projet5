@@ -164,72 +164,126 @@ for (let i = 0; i < cart.length; i++) {
 
 /* vérifier le formulaire */
 
-const clientForm = {
-  firstName : document.querySelector("#firstName"),
-  lastName : document.querySelector("#lastName"),
-  address : document.querySelector("#address"),
-  city : document.querySelector("#city"),
-  email : document.querySelector("#email")
+const firstName = document.querySelector("#firstName");
+const lastName = document.querySelector("#lastName");
+const address = document.querySelector("#address");
+const city = document.querySelector("#city");
+const email = document.querySelector("#email");
+
+let textRegExp = new RegExp("[A-Za-zÀ-ÿ\-']");
+let addressRegExp = new RegExp("^[.0-9a-zA-Z\s,-]+$");
+let emailRegExp = new RegExp("[A-Za-z0-9]+@[A-Za-z.]+.[A-Za-z]{2,3}$");
+
+/* Tester la saisie du formulaire */
+
+function checkInput() {
+
+  let tests = [
+  textRegExp.test(firstName.value),
+  textRegExp.test(lastName.value),
+  addressRegExp.test(address.value),
+  textRegExp.test(city.value),
+  emailRegExp.test(email.value)
+  ]
+
+  let clientForm = [
+    firstName,
+    lastName,
+    address,
+    city,
+    email
+  ]
+
+  let errorMsg = [
+    document.querySelector("#firstNameErrorMsg"),
+    document.querySelector("#lastNameErrorMsg"),
+    document.querySelector("#addressErrorMsg"),
+    document.querySelector("#cityErrorMsg"),
+    document.querySelector("#emailErrorMsg")
+  ]
+
+  /* Signaler les saisies valides ou erronées */
+
+  for (let i = 0; i < tests.length; i++) {
+    let validInput = "solid green";
+    let invalidInput = "solid red";
+
+    if (tests[i] == true){
+      clientForm[i].style.border = validInput;
+    } else {
+      clientForm[i].style.border = invalidInput;
+      errorMsg[i].textContent = "Erreur de saisie"
+    }
+  } 
 }
 
-let contact = {
-  firstName : clientForm.firstName.value,
-  lastName : clientForm.lastName.value,
-  address : clientForm.address.value,
-  city : clientForm.city.value,
-  email : clientForm.email.value
+/* Valider le formulaire */
+
+function validateForm () {
+  if (textRegExp.test(firstName.value) == true &&
+      textRegExp.test(lastName.value) == true &&
+      addressRegExp.test(address.value) == true &&
+      textRegExp.test(city.value) == true &&
+      emailRegExp.test(email.value) == true) {
+        return true
+      } else {
+        return false
+      }
 }
-
-const errorMsg = {
-  firstName : document.querySelector("#firstNameErrorMsg"),
-  lastName : document.querySelector("#lastNameErrorMsg"),
-  address : document.querySelector("#addressErrorMsg"),
-  city : document.querySelector("#cityErrorMsg"),
-  email : document.querySelector("#emailErrorMsg")
-}
-
-let textRegExp = new RegExp("^[A-Za-zÀ-ÿ]+$");
-let addressRegExp = new RegExp("[A-Za-zÀ-ÿ0-9]+$-'")
-let emailRegExp = new RegExp("^\\w+@\\w+.[A-Za-z]+$");
-
 
 /* Commander */
 
 function placeOrder() {
   const orderClick = document.querySelector("#order");
 
-  orderClick.addEventListener("click", sendOrder)
+  orderClick.addEventListener("click", sendOrder, false)
 
-  function sendOrder() {
+  function sendOrder(submit) {
+    
+    submit.preventDefault();
 
-    /* Renvoyer des erreurs de saisie ou valider la commande */
-
+    /* Valider la commande */
+    
     if (cart.length == 0){
       alert("Vous n'avez aucun article dans le panier")
     } else {
-      const orderPost = fetch("http://localhost:3000/api/products/order", {
-        method : "POST",
-        headers : {
-          "Content-Type" : "application/json"
-        },
-        body : JSON.stringify(contact, productsId)
-        })
+      const contact = {
+        firstName: firstName.value,
+        lastName: lastName.value,
+        address: address.value,
+        city: city.value,
+        email: email.value
+      }
 
-        console.log(contact)
-        console.log(productsId)
-      
-      orderPost.then(async function (res) {
-        try {
-          let order = await res.json();
-          console.log(order);
-          
-          /*localStorage.clear("cart");*/
-          /*window.location.href = `../html/confirmation.html?id=${order.orderId}`;*/
-          
-        } catch (e) {
-          console.log(e);
-        }
-      })
+      console.log(contact)
+      console.log(productsId)
+
+      checkInput()
+      validateForm ()
+
+      if (validateForm() == true) {
+
+        const orderPost = fetch("http://localhost:3000/api/products/order", {
+          method : "POST",
+          headers : {
+            "Content-Type" : "application/json"
+          },
+          body : JSON.stringify({contact, productsId})
+          })
+
+        orderPost.then(async function (response) {
+          try {
+            const content = await response.json();
+            /*localStorage.clear("cart");*/
+            /*window.location = `../html/confirmation.html?id=${content.orderId}`;*/
+            console.log(content.orderId)
+          } catch (error) {
+            console.log(error);
+          }
+        });
+      } else {
+        alert("Veuillez vérifier le formulaire")
+      }
     }
   }
 }
