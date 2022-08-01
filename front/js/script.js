@@ -1,7 +1,7 @@
 /*Récupérer le contenu*/
 const apiFetch = fetch("http://localhost:3000/api/products/");
 
-/*créer le html de la section items*/
+/*créer le contenu HTML de la section .items*/
 
 apiFetch.then(async function(res) {
   try{
