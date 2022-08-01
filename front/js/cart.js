@@ -7,15 +7,15 @@ let productsId = [];
 
 for (let i = 0; i < cart.length; i++) {
  
-  const apiFetch = fetch(`http://localhost:3000/api/products/${cart[i].id}`);
+  const apiFetch = fetch("http://localhost:3000/api/products/"+`${cart[i].id}`);
   
   apiFetch.then(async function(res) { 
     try{
       if (res.ok) {
-      let products = await res.json();
+        let products = await res.json();
 
       /*Afficher les produits*/
-      function displayProducts() {
+        function displayProducts() {
 
           /*créer les éléments html de la section cart__items*/
 
@@ -151,8 +151,8 @@ for (let i = 0; i < cart.length; i++) {
           productsId.push(cart[i].id);
         }
       }
-      
       displayProducts();
+    
 
     } catch (e) {
       console.log(e);
@@ -170,9 +170,9 @@ const address = document.querySelector("#address");
 const city = document.querySelector("#city");
 const email = document.querySelector("#email");
 
-let textRegExp = new RegExp("[A-Za-zÀ-ÿ\-']");
-let addressRegExp = new RegExp("^[0-9a-zA-Z\s,-. ]+$");
-let emailRegExp = new RegExp("[A-Za-z0-9]+@[A-Za-z.]+.[A-Za-z]{2,3}$");
+let textRegExp = new RegExp("^[A-Za-zÀ-ÿ'-]+[^0-9_!¿/+=@#$%&(){}|~<>;:]$");
+let addressRegExp = new RegExp("^[0-9a-zA-ZÀ-ÿ\s,-. ]+$");
+let emailRegExp = new RegExp("[A-Za-z0-9]+@[A-Za-z.-]+.[A-Za-z]{2,3}$");
 
 /* Tester la saisie du formulaire */
 

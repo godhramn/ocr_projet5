@@ -4,7 +4,7 @@ let searchParams = new URLSearchParams(url.search);
 let productId = searchParams.get("id");
 
 /*Récupérer les informations dans l'API*/
-const apiFetch = fetch(`http://localhost:3000/api/products/${productId}`);
+const apiFetch = fetch("http://localhost:3000/api/products/"+`${productId}`);
 
 /*Intégrer le html dans la section item*/
 apiFetch.then(async function(res) {
@@ -85,6 +85,7 @@ function saveInCart() {
         cart.push(productInfo);
       }
       alert("Ajouté au panier");
+      window.location.reload()
     }
     localStorage.setItem("cart", JSON.stringify(cart));
     console.log(cart);
