@@ -38,7 +38,6 @@ apiFetch.then(async function(res) {
           options.appendChild(option);
           option.value = product.colors[i];
           option.textContent = product.colors[i];
-         
         } 
       }
       displayProduct(); /* Afficher les informations du produit */
@@ -92,8 +91,8 @@ function saveInCart() {
       window.location.reload()
     }
     localStorage.setItem("cart", JSON.stringify(cart));
-    console.log(cart);
   }
 }
 
-saveInCart();
+saveInCart(); /* Stocker les produits ajoutés dans le Panier */
+

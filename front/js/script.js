@@ -1,23 +1,25 @@
 /*Récupérer le contenu*/
 const apiFetch = fetch("http://localhost:3000/api/products/");
 
-/*créer le contenu HTML de la section .items*/
-
 apiFetch.then(async function(res) {
   try{
-    if (res.ok) {
     let products = await res.json();
-    
+  
+    /*Afficher les produits*/
+
     function displayProducts() {
       for (let i = 0; i < products.length; i++) {
+
+        /*créer le contenu HTML de la section .items*/
+
         const items = document.querySelector("#items");
-        
+      
         const link = document.createElement("a");
         link.href = `../html/product.html?id=${products[i]._id}`;
         items.appendChild(link);
         const article = document.createElement("article");
         link.appendChild(article);
-        
+      
         const image = document.createElement("img");
         image.src = products[i].imageUrl;
         image.alt = products[i].altTxt;
@@ -30,14 +32,12 @@ apiFetch.then(async function(res) {
         article.appendChild(description);
       }
     }
-    /*Afficher les produits*/
-    displayProducts();
-  }
-  
+    displayProducts(); /* -> Afficher les produits*/
   } catch (e) {
     console.log(e);
   }
 })
+
   
 
 

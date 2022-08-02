@@ -4,13 +4,15 @@ let arrayQuantity = [];
 let prices = [];
 let productsId = [];
 
-for (let i = 0; i < cart.length; i++) {
- 
-  const apiFetch = fetch("http://localhost:3000/api/products/"+`${cart[i].id}`);
+/* AFFICHER LES PRODUITS DU PANIER */
+
+if (cart != null && cart.length != 0) {
+  for (let i = 0; i < cart.length; i++) {
   
-  apiFetch.then(async function(res) { 
-    try{
-      if (res.ok) {
+    const apiFetch = fetch("http://localhost:3000/api/products/"+`${cart[i].id}`);
+
+    apiFetch.then(async function(res) { 
+      try{
         let products = await res.json();
 
         /*créer les éléments html de la section cart__items*/
@@ -20,29 +22,29 @@ for (let i = 0; i < cart.length; i++) {
           article.className = "cart__item";
           article.dataset.id = cart[i].id;
           article.dataset.color = cart[i].color;
-          
+
           const itemImg = document.createElement("div");
           itemImg.className = `${article.className}` + "__img";
-          
           const image = document.createElement("img");
           image.src = products.imageUrl;
           image.alt = products.altTxt;
-          
+
           const itemContent = document.createElement("div");
           itemContent.className = `${article.className}`+"__content";
+
           const contentDescription = document.createElement("div");
           contentDescription.className = `${itemContent.className}`+"__description";
-          
+
           const productName = document.createElement("h2");
           productName.textContent = products.name;
           const productColor = document.createElement("p");
           productColor.textContent = cart[i].color;
+
           const productPrice = document.createElement("p");
           productPrice.textContent = Number(products.price) + " €";
 
           const contentSettings = document.createElement("div");
           contentSettings.className = `${itemContent.className}` + "__settings";
-
           const settingsQuantity = document.createElement("div");
           settingsQuantity.className = `${contentSettings.className}` + "__quantity";
           const itemQuantity = document.createElement("p");
@@ -58,6 +60,7 @@ for (let i = 0; i < cart.length; i++) {
 
           const settingsDelete = document.createElement("div");
           settingsDelete.className = `${contentSettings.className}` + "__delete";
+
           const itemDelete = document.createElement("p");
           itemDelete.className = "deleteItem";
           itemDelete.textContent = "Supprimer";
@@ -77,9 +80,7 @@ for (let i = 0; i < cart.length; i++) {
           contentSettings.appendChild(settingsDelete);
           settingsDelete.appendChild(itemDelete);
         
-
           /* Modification de la quantité du produit */
-
           function changeQuantity(){
             setQuantity.addEventListener("change", updateQuantity);
             function updateQuantity() {
@@ -97,9 +98,7 @@ for (let i = 0; i < cart.length; i++) {
               }
             }
           }
-
           /* Suppression du produit */
-
           function deleteProduct(){
             itemDelete.addEventListener("click", updateProducts);
             function updateProducts(){
@@ -111,7 +110,6 @@ for (let i = 0; i < cart.length; i++) {
           }
 
           /*créer mes éléments html de la section cart__quantity*/
-
           /* == afficher le total d'articles */
           function displayQuantity() {
             arrayQuantity.push(parseInt(cart[i].quantity));
@@ -130,19 +128,25 @@ for (let i = 0; i < cart.length; i++) {
           }
 
           /* Exécuter les fonctions */
-
-          changeQuantity(); /* Changer la quantité du produit */
-          deleteProduct(); /* Supprimer le produit */
-          displayQuantity(); /* Afficher la quantité totale d'articles */
-          displayPrice(); /* Afficher le prix total */
+          changeQuantity(); /* -> Changer la quantité du produit */
+          deleteProduct(); /* -> Supprimer le produit */
+          displayQuantity(); /* -> Afficher la quantité totale d'articles */
+          displayPrice(); /* -> Afficher le prix total */
           productsId.push(cart[i].id);
-        }
+        } 
+        displayProducts(); /* -> Afficher les produits */
+      } catch (e) {
+        console.log(e);
       }
-      displayProducts(); /* Afficher les produits */
-    } catch (e) {
-      console.log(e);
-    }
-  })
+    })
+  }
+} else {
+  const items = document.querySelector("#cart__items");
+  items.textContent = "Aucun article dans le panier";
+  const totalQuantity = document.querySelector("#totalQuantity");
+  totalQuantity.textContent = "0";
+  const totalPrice = document.querySelector("#totalPrice");
+  totalPrice.textContent = "0";
 }
 
 /* PASSER LA COMMANDE */
@@ -161,10 +165,6 @@ let clientForm = [
   email
 ]
 
-let textRegExp = new RegExp("^[A-Za-zÀ-ÿ '-]+[^0-9_!¿/+=@#$%&(){}|~<>;:]$");
-let addressRegExp = new RegExp("^[0-9a-zA-ZÀ-ÿ\s,-. ]+$");
-let emailRegExp = new RegExp("[A-Za-z0-9]+@[A-Za-z.-]+.[A-Za-z]{2,3}$");
-
 let errorMsg = [
   document.querySelector("#firstNameErrorMsg"),
   document.querySelector("#lastNameErrorMsg"),
@@ -173,6 +173,9 @@ let errorMsg = [
   document.querySelector("#emailErrorMsg")
 ]
 
+let textRegExp = new RegExp("^[A-Za-zÀ-ÿ '-]+[^0-9_!¿/+=@#$%&(){}|~<>;:]$");
+let addressRegExp = new RegExp("^[0-9a-zA-ZÀ-ÿ',-. ]+$");
+let emailRegExp = new RegExp("[A-Za-z0-9]+@[A-Za-z.-]+.[A-Za-z]{2,3}$");
 
 /* Mettre en forme la saisie */
 
@@ -250,8 +253,8 @@ function placeOrder() {
       alert("Vous n'avez aucun article dans le panier")
     } else {
 
-      checkInput() /* Vérifier la saisie des champs */
-      validateForm () /* Vérifier si le formulaire est correctement rempli */
+      checkInput() /* -> Vérifier la saisie des champs */
+      validateForm () /* -> Vérifier si le formulaire est correctement rempli */
       
       /* Valider la commande */
 
@@ -290,5 +293,7 @@ function placeOrder() {
   }
 }
 
-normalizeTextInput() /* Mettre en forme la saisie */
-placeOrder() /* Vérifier la commande */
+normalizeTextInput() /* -> Mettre en forme la saisie */
+placeOrder() /* -> Vérifier la commande */
+
+console.log(cart);
