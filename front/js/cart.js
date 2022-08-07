@@ -175,7 +175,7 @@ let errorMsg = [
 
 let textRegExp = new RegExp("^[A-Za-zÀ-ÿ '-]+[^0-9_!¿/+=@#$%&(){}|~<>;:]$");
 let addressRegExp = new RegExp("^[0-9a-zA-ZÀ-ÿ',-. ]+$");
-let emailRegExp = new RegExp("[A-Za-z0-9]+@[A-Za-z.-]+.[A-Za-z]{2,3}$");
+let emailRegExp = new RegExp("[A-Za-z0-9]+@[A-Za-z.-]+[.]+[A-Za-z]{2,3}$");
 
 /* Mettre en forme la saisie */
 
